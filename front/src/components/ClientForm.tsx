@@ -3,9 +3,9 @@ import { getAllClientes, createCliente, updateCliente, deleteCliente } from '../
 
 interface Client {
   id: number;
-  name: string;
-  address: string;
-  phone: string;
+  nombre: string;
+  direccion: string;
+  telefono: string;
   email: string;
   ruc: string;
   ci: string;
@@ -13,12 +13,12 @@ interface Client {
 
 const ClientForm: React.FC = () => {
   // Estados para manejar los campos del formulario
-  const [clientName, setClientName] = useState<string>('');
-  const [clientAddress, setClientAddress] = useState<string>('');
-  const [clientPhone, setClientPhone] = useState<string>('');
-  const [clientEmail, setClientEmail] = useState<string>('');
-  const [clientRUC, setClientRUC] = useState<string>('');
-  const [clientCI, setClientCI] = useState<string>('');
+  const [nombreCliente, setNombreCliente] = useState<string>('');
+  const [direccionCliente, setDireccionCliente] = useState<string>('');
+  const [telefonoCliente, setTelefonoCliente] = useState<string>('');
+  const [emailCliente, setEmailCliente] = useState<string>('');
+  const [rucCliente, setRucCliente] = useState<string>('');
+  const [ciCliente, setCiCliente] = useState<string>('');
 
   // Estados para manejar la búsqueda de clientes
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -26,6 +26,9 @@ const ClientForm: React.FC = () => {
 
   // Estado para mostrar u ocultar el formulario de agregar cliente
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
+
+  // Estado para guardar temporalmente los datos del cliente que se va a editar
+  const [editingClient, setEditingClient] = useState<Client | null>(null);
 
   // Estado para manejar errores en el formulario
   const [formError, setFormError] = useState<string>('');
@@ -50,31 +53,31 @@ const ClientForm: React.FC = () => {
     e.preventDefault();
 
     // Validar que los campos requeridos no estén vacíos
-    if (!clientName || !clientAddress) {
+    if (!nombreCliente || !direccionCliente) {
       setFormError('Los campos Nombre y Dirección son obligatorios.');
       return;
     }
 
     try {
       const newClient: Omit<Client, 'id'> = {
-        name: clientName,
-        address: clientAddress,
-        phone: clientPhone,
-        email: clientEmail,
-        ruc: clientRUC,
-        ci: clientCI,
+        nombre: nombreCliente,
+        direccion: direccionCliente,
+        telefono: telefonoCliente,
+        email: emailCliente,
+        ruc: rucCliente,
+        ci: ciCliente,
       };
 
       await createCliente(newClient);
 
       // Actualizar la lista de clientes y limpiar los campos del formulario
       fetchClients();
-      setClientName('');
-      setClientAddress('');
-      setClientPhone('');
-      setClientEmail('');
-      setClientRUC('');
-      setClientCI('');
+      setNombreCliente('');
+      setDireccionCliente('');
+      setTelefonoCliente('');
+      setEmailCliente('');
+      setRucCliente('');
+      setCiCliente('');
 
       // Ocultar el formulario de agregar cliente y reiniciar el estado de errores
       setShowAddForm(false);
@@ -97,7 +100,7 @@ const ClientForm: React.FC = () => {
       }
 
       const filtered: Client[] = clients.filter((client) => {
-        const clientNameLowerCase: string = client.name ? client.name.toLowerCase() : '';
+        const clientNameLowerCase: string = client.nombre ? client.nombre.toLowerCase() : '';
         const searchTermLowerCase: string = searchTerm.toLowerCase();
         return (
           clientNameLowerCase.includes(searchTermLowerCase) ||
@@ -120,29 +123,23 @@ const ClientForm: React.FC = () => {
   // Función para editar un cliente existente
   const handleEditClient = async (id: number) => {
     try {
-      const clientToUpdate: Client = {
-        id: id,
-        name: clientName,
-        address: clientAddress,
-        phone: clientPhone,
-        email: clientEmail,
-        ruc: clientRUC,
-        ci: clientCI,
-      };
+      // Buscar el cliente en la lista de clientes filtrados
+      const clientToEdit = filteredClients.find((client) => client.id === id);
 
-      await updateCliente(id, clientToUpdate);
+      // Si se encontró el cliente, guardar sus datos en el estado de edición
+      if (clientToEdit) {
+        setEditingClient(clientToEdit);
+        // También puedes establecer los campos del formulario con los datos del cliente a editar
+        setNombreCliente(clientToEdit.nombre);
+        setDireccionCliente(clientToEdit.direccion);
+        setTelefonoCliente(clientToEdit.telefono);
+        setEmailCliente(clientToEdit.email);
+        setRucCliente(clientToEdit.ruc);
+        setCiCliente(clientToEdit.ci);
+      }
 
-      // Actualizar la lista de clientes y limpiar los campos del formulario
-      fetchClients();
-      setClientName('');
-      setClientAddress('');
-      setClientPhone('');
-      setClientEmail('');
-      setClientRUC('');
-      setClientCI('');
-
-      // Ocultar el formulario de agregar cliente
-      setShowAddForm(false);
+      // Mostrar el formulario de editar cliente
+      setShowAddForm(true);
     } catch (error) {
       console.error('Error al editar el cliente:', error);
     }
@@ -178,13 +175,13 @@ const ClientForm: React.FC = () => {
       {filteredClients.map((client) => (
         <div key={client.id} className="mb-3">
           <p>
-            <strong>Nombre del Cliente:</strong> {client.name}
+            <strong>Nombre del Cliente:</strong> {client.nombre}
           </p>
           <p>
-            <strong>Dirección del Cliente:</strong> {client.address}
+            <strong>Dirección del Cliente:</strong> {client.direccion}
           </p>
           <p>
-            <strong>Teléfono del Cliente:</strong> {client.phone}
+            <strong>Teléfono del Cliente:</strong> {client.telefono}
           </p>
           <p>
             <strong>Correo Electrónico del Cliente:</strong> {client.email}
@@ -215,8 +212,8 @@ const ClientForm: React.FC = () => {
             <input
               type="text"
               className="transparent-input"
-              value={clientName}
-              onChange={(e) => setClientName(e.target.value)}
+              value={nombreCliente}
+              onChange={(e) => setNombreCliente(e.target.value)}
             />
           </div>
           <div className="mb-3">
@@ -224,8 +221,8 @@ const ClientForm: React.FC = () => {
             <input
               type="text"
               className="transparent-input"
-              value={clientAddress}
-              onChange={(e) => setClientAddress(e.target.value)}
+              value={direccionCliente}
+              onChange={(e) => setDireccionCliente(e.target.value)}
             />
           </div>
           <div className="mb-3">
@@ -233,8 +230,8 @@ const ClientForm: React.FC = () => {
             <input
               type="text"
               className="transparent-input"
-              value={clientPhone}
-              onChange={(e) => setClientPhone(e.target.value)}
+              value={telefonoCliente}
+              onChange={(e) => setTelefonoCliente(e.target.value)}
             />
           </div>
           <div className="mb-3">
@@ -242,8 +239,8 @@ const ClientForm: React.FC = () => {
             <input
               type="email"
               className="transparent-input"
-              value={clientEmail}
-              onChange={(e) => setClientEmail(e.target.value)}
+              value={emailCliente}
+              onChange={(e) => setEmailCliente(e.target.value)}
             />
           </div>
           <div className="mb-3">
@@ -251,8 +248,8 @@ const ClientForm: React.FC = () => {
             <input
               type="text"
               className="transparent-input"
-              value={clientRUC}
-              onChange={(e) => setClientRUC(e.target.value)}
+              value={rucCliente}
+              onChange={(e) => setRucCliente(e.target.value)}
             />
           </div>
           <div className="mb-3">
@@ -260,8 +257,8 @@ const ClientForm: React.FC = () => {
             <input
               type="text"
               className="transparent-input"
-              value={clientCI}
-              onChange={(e) => setClientCI(e.target.value)}
+              value={ciCliente}
+              onChange={(e) => setCiCliente(e.target.value)}
             />
           </div>
           <button className="btn btn-primary" type="submit">
