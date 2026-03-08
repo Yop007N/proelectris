@@ -23,20 +23,20 @@ Sistema de gestion de inventario y clientes para una empresa electrica. Permite 
 
 ```
 proelectris/
-├── backend/           # API REST con Express y Sequelize
-│   ├── src/
-│   │   ├── config/    # Configuracion de base de datos
-│   │   ├── models/    # Modelos Sequelize (Cliente, Producto, ClienteProducto)
-│   │   ├── routes/    # Rutas de la API
-│   │   └── controllers/ # Controladores de logica de negocio
-│   └── package.json
-├── front/             # Aplicacion React
-│   ├── src/
-│   │   ├── components/ # Componentes reutilizables
-│   │   ├── pages/      # Paginas de la aplicacion
-│   │   └── services/   # Servicios de API
-│   └── package.json
-└── proelectris.postman_collection.json  # Coleccion de endpoints para testing
+????????? backend/           # API REST con Express y Sequelize
+???   ????????? src/
+???   ???   ????????? config/    # Configuracion de base de datos
+???   ???   ????????? models/    # Modelos Sequelize (Cliente, Producto, ClienteProducto)
+???   ???   ????????? routes/    # Rutas de la API
+???   ???   ????????? controllers/ # Controladores de logica de negocio
+???   ????????? package.json
+????????? front/             # Aplicacion React
+???   ????????? src/
+???   ???   ????????? components/ # Componentes reutilizables
+???   ???   ????????? pages/      # Paginas de la aplicacion
+???   ???   ????????? services/   # Servicios de API
+???   ????????? package.json
+????????? proelectris-api.postman_collection.json  # Coleccion de endpoints para testing
 ```
 
 ## Modelos de Datos
@@ -101,7 +101,7 @@ npm start
 
 ### API Endpoints
 
-La coleccion de Postman incluida (`proelectris.postman_collection.json`) contiene todos los endpoints disponibles:
+La coleccion de Postman incluida (`proelectris-api.postman_collection.json`) contiene todos los endpoints disponibles:
 
 - `GET /api/clientes` - Listar todos los clientes
 - `POST /api/clientes` - Crear nuevo cliente
@@ -138,7 +138,7 @@ npm run build
 
 ## Testing
 
-Importar `proelectris.postman_collection.json` en Postman para probar todos los endpoints de la API.
+Importar `proelectris-api.postman_collection.json` en Postman para probar todos los endpoints de la API.
 
 ## Licencia
 
@@ -147,3 +147,4 @@ MIT
 ## Autor
 
 Desarrollado para gestion de inventario y clientes en el sector electrico.
+
